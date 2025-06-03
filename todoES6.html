@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+            padding-top: 3rem;
+        }
+
+        form {
+            background: #ffffffee;
+            padding: 2rem 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+            max-width: 450px;
+            backdrop-filter: blur(8px);
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid #b2ebf2;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            background: #f0fdfc;
+        }
+
+        input[type="text"]:focus {
+            border-color: #00bcd4;
+            box-shadow: 0 0 0 4px rgba(0, 188, 212, 0.2);
+        }
+
+        button.Submit {
+            background: linear-gradient(90deg, #00bcd4 0%, #2196f3 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 188, 212, 0.25);
+            transition: all 0.2s ease-in-out;
+        }
+
+        button.Submit:hover {
+            background: linear-gradient(90deg, #0097a7 0%, #1976d2 100%);
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        #task-list {
+            margin-top: 2rem;
+            width: 100%;
+            max-width: 450px;
+            list-style: none;
+            padding: 0;
+        }
+
+        #task-list li {
+            background: #ffffff;
+            margin-bottom: 1rem;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 6px solid #00bcd4;
+            transition: all 0.2s ease-in-out;
+        }
+
+        #task-list li:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        #task-list li span {
+            flex: 1;
+            color: #333;
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .task-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        #task-list button {
+            border: none;
+            border-radius: 6px;
+            padding: 0.45rem 0.9rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        #task-list button:first-child {
+            background: #ffca28;
+            color: #fff;
+        }
+
+        #task-list button:first-child:hover {
+            background: #f9a825;
+            transform: scale(1.05);
+        }
+
+        #task-list button:last-child {
+            background: #e53935;
+            color: #fff;
+        }
+
+        #task-list button:last-child:hover {
+            background: #c62828;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 500px) {
+            form,
+            #task-list {
+                max-width: 90vw;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <form action="" id="task-form">
+        <input type="text" placeholder="Enter Your Daily Task" id="task-input" required>
+        <button class="Submit">Submit</button>
+    </form>
+    <ul id="task-list"></ul>
+
+    <script>
+        const form = document.getElementById('task-form');
+        const input = document.getElementById('task-input');
+        const list = document.getElementById('task-list');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const task = input.value.trim();
+            if (task) {
+                const li = document.createElement('li');
+                const span = document.createElement('span');
+                span.textContent = task;
+                li.appendChild(span);
+
+                const editBtn = document.createElement('button');
+                editBtn.textContent = "Edit";
+                editBtn.addEventListener('click', function () {
+                    if (editBtn.textContent === "Edit") {
+                        const editInput = document.createElement('input');
+                        editInput.type = "text";
+                        editInput.value = span.textContent;
+                        editInput.style.flex = "1";
+                        editInput.style.marginRight = "0.5rem";
+                        li.insertBefore(editInput, span);
+                        li.removeChild(span);
+                        editBtn.textContent = "Save";
+                        editInput.focus();
+                    } else {
+                        const newValue = li.querySelector('input').value.trim();
+                        if (newValue) {
+                            span.textContent = newValue;
+                            li.insertBefore(span, li.querySelector('input'));
+                            li.removeChild(li.querySelector('input'));
+                            editBtn.textContent = "Edit";
+                        }
+                    }
+                });
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = "Delete";
+                deleteBtn.addEventListener('click', function () {
+                    list.removeChild(li);
+                });
+
+                const btnContainer = document.createElement('div');
+                btnContainer.className = "task-btns";
+                btnContainer.appendChild(editBtn);
+                btnContainer.appendChild(deleteBtn);
+
+                li.appendChild(btnContainer);
+                list.appendChild(li);
+                input.value = '';
+            }
+        });
+    </script>
+</body>
+</html>
